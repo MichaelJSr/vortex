@@ -26,15 +26,19 @@
 using namespace vortex;
 
 static void show_usage() {
-   std::cout << "Usage: [-h: help] <program>" << std::endl;
+   std::cout << "Usage: [-r: riscv-test] [-h: help] <program>" << std::endl;
 }
 
+bool riscv_test = false;
 const char* program = nullptr;
 
 static void parse_args(int argc, char **argv) {
   	int c;
   	while ((c = getopt(argc, argv, "rh?")) != -1) {
     	switch (c) {
+		case 'r':
+			riscv_test = true;
+			break;
     	case 'h':
     	case '?':
       		show_usage();
@@ -94,7 +98,7 @@ int main(int argc, char **argv) {
 	processor.run();
 
 	// read exitcode from @MPM.1
-  ram.read(&exitcode, (IO_MPM_ADDR + 8), 4);
+	ram.read(&exitcode, (IO_MPM_ADDR + 8), 4);
 
-	return exitcode;
+	return (riscv_test ? 1 - exitcode : exitcode);
 }

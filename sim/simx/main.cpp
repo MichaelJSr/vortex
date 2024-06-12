@@ -29,13 +29,14 @@
 using namespace vortex;
 
 static void show_usage() {
-   std::cout << "Usage: [-c <cores>] [-w <warps>] [-t <threads>] [-s: stats] [-h: help] <program>" << std::endl;
+   std::cout << "Usage: [-c <cores>] [-w <warps>] [-t <threads>] [-r: riscv-test] [-s: stats] [-h: help] <program>" << std::endl;
 }
 
 uint32_t num_threads = NUM_THREADS;
 uint32_t num_warps = NUM_WARPS;
 uint32_t num_cores = NUM_CORES;
 bool showStats = false;
+bool riscv_test = false;
 const char* program = nullptr;
 
 static void parse_args(int argc, char **argv) {
@@ -50,6 +51,9 @@ static void parse_args(int argc, char **argv) {
         break;
 		  case 'c':
         num_cores = atoi(optarg);
+        break;
+      case 'r':
+        riscv_test = true;
         break;
       case 's':
         showStats = true;
@@ -120,5 +124,5 @@ int main(int argc, char **argv) {
     ram.read(&exitcode, (IO_MPM_ADDR + 8), 4);
   }
 
-  return exitcode;
+  return (riscv_test ? 1 - exitcode : exitcode);
 }
