@@ -383,8 +383,10 @@ vector()
 {
     echo "begin vector tests..."
 
-    echo TOOLDIR:$TOOLDIR
-    VLEN=256 ./tests/riscv/riscv-vector-tests/run-test.sh
+    echo TOOLDIR:@TOOLDIR@
+    echo TOOLDIR:${@TOOLDIR@}
+    echo PATH:$PATH
+    TOOLDIR=${@TOOLDIR@} VLEN=256 ./tests/riscv/riscv-vector-tests/run-test.sh
 
     echo "vector tests done!"
 }
