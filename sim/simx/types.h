@@ -269,6 +269,20 @@ inline std::ostream &operator<<(std::ostream &os, const SfuType& type) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+enum class VpuType {
+  VSET
+};
+
+inline std::ostream &operator<<(std::ostream &os, const VpuType& type) {
+  switch (type) {
+  case VpuType::VSET:   os << "VSET"; break;
+  default: assert(false);
+  }
+  return os;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 enum class ArbiterType {
   Priority,
   RoundRobin

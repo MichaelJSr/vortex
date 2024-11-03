@@ -113,4 +113,18 @@ public:
 	void tick();
 };
 
+///////////////////////////////////////////////////////////////////////////////
+
+class VpuUnit : public FuncUnit {
+public:
+	VpuUnit(const SimContext& ctx, Core*);
+
+	void tick();
+};
+
+// Simulate clock cycles depending on instruction type and width
+// Vset = 1 cycle
+// Vector ALU ops cycle count depend on vsew
+// Check how dynamic instruction width works and how much vsew affects cycle count
+
 }
