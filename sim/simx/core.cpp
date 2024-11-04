@@ -334,6 +334,7 @@ void Core::issue() {
             default: assert(false);
             }
           } break;
+          // Add case for VpuType
           default: assert(false);
           }
         }

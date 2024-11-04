@@ -270,7 +270,21 @@ inline std::ostream &operator<<(std::ostream &os, const SfuType& type) {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum class VpuType {
-  VSET
+  VSET,     // Set vector length
+  VL,       // Vector load
+  VS,       // Vector store
+
+  ARITHVV,  // Vector-vector
+  MULVV,
+  DIVVV,
+
+  ARITHVX,  // Vector-scalar
+  MULVX,
+  DIVVX,
+
+  ARITHVI,  // Vector-immediate
+  MULVI,
+  DIVVI
 };
 
 inline std::ostream &operator<<(std::ostream &os, const VpuType& type) {
