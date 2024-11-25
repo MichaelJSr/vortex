@@ -274,6 +274,7 @@ enum class VpuType {
   VL,       // Vector load
   VS,       // Vector store
 
+  // ALU OPERATIONS
   ARITHVV,  // Vector-vector
   MULVV,
   DIVVV,
@@ -284,7 +285,20 @@ enum class VpuType {
 
   ARITHVI,  // Vector-immediate
   MULVI,
-  DIVVI
+  DIVVI,
+
+  // FPU OPERATIONS
+  ARITHFVV,  // Vector-vector
+  MULFVV,
+  DIVFVV,
+
+  ARITHFVX,  // Vector-scalar
+  MULFVX,
+  DIVFVX,
+
+  ARITHFVI,  // Vector-immediate
+  MULFVI,
+  DIVFVI
 };
 
 inline std::ostream &operator<<(std::ostream &os, const VpuType& type) {
