@@ -96,7 +96,11 @@ for testcase in ${testcases[@]}; do
     ln -s "$f" "$f.elf";
     "$RISCV_TOOLCHAIN_PATH"/bin/riscv"$XLEN"-unknown-elf-objdump -D "$f.elf" > "$f.dump";
     "$RISCV_TOOLCHAIN_PATH"/bin/riscv"$XLEN"-unknown-elf-objcopy -O binary "$f.elf" "$f.bin";
-    $SCRIPT_DIR/../../../sim/simx/simx -v -c 1 "$f.bin" &> "$f.log";
+    if [ -n "$RTLSIM" ] && [ $RTLSIM -eq 1 ]; then
+      $SCRIPT_DIR/../../../sim/rtlsim/rtlsim "$f.bin" &> "$f.log";
+    else
+      $SCRIPT_DIR/../../../sim/simx/simx -v -c 1 "$f.bin" &> "$f.log";
+    fi
     if [ $? -eq 1 ]; then
       echo "$f PASSED"
       let "passed++"

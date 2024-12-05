@@ -122,6 +122,21 @@ package VX_gpu_pkg;
         logic [4:0] imm;
     } csr_args_t;
 
+`ifdef VECTOR_ENABLE
+    typedef struct packed {
+        logic [($bits(alu_args_t)-3-3-1-1-1-5-5)-1:0] __padding;
+        // Vtype
+        logic [2:0] vlmul;
+        logic [2:0] vsew;
+        logic vta;
+        logic vma;
+        logic vill;
+        // End Vtype
+        logic [4:0] rs1;
+        logic [4:0] uimm;
+    } vpu_args_t;
+`endif
+
     typedef struct packed {
         logic [($bits(alu_args_t)-1)-1:0] __padding;
         logic is_neg;
@@ -132,6 +147,9 @@ package VX_gpu_pkg;
         fpu_args_t  fpu;
         lsu_args_t  lsu;
         csr_args_t  csr;
+    `ifdef VECTOR_ENABLE
+        vpu_args_t  vpu;
+    `endif
         wctl_args_t wctl;
     } op_args_t;
 
@@ -324,6 +342,9 @@ package VX_gpu_pkg;
         `ifdef EXT_F_ENABLE
             `EX_FPU: `TRACE(level, ("FPU"))
         `endif
+        `ifdef VECTOR_ENABLE
+            `EX_VPU: `TRACE(level, ("VPU"))
+        `endif
             default: `TRACE(level, ("?"))
         endcase
     endtask
@@ -504,6 +525,11 @@ package VX_gpu_pkg;
                         `TRACE(level, ("CSRRC"))
                     end
                 end
+            `ifdef VECTOR_ENABLE
+                `INST_VPU_VSETVL:       `TRACE(level, ("VSET")) // Move these to VPU
+                `INST_VPU_VSETVLI:      `TRACE(level, ("VSET"))
+                `INST_VPU_VSETIVLI:     `TRACE(level, ("VSET"))
+            `endif
                 default:         `TRACE(level, ("?"))
             endcase
         end
@@ -689,6 +715,13 @@ package VX_gpu_pkg;
             endcase
         end
     `endif
+    `ifdef VECTOR_ENABLE
+        `EX_VPU: begin
+            case (op_type)
+                default:                `TRACE(level, ("?"))
+            endcase
+        end
+    `endif
         default: `TRACE(level, ("?"))
         endcase
     endtask
@@ -709,10 +742,20 @@ package VX_gpu_pkg;
             if (`INST_SFU_IS_CSR(op_type)) begin
                 `TRACE(level, (", addr=0x%0h, use_imm=%b, imm=0x%0h", op_args.csr.addr, op_args.csr.use_imm, op_args.csr.imm))
             end
+        `ifdef VECTOR_ENABLE
+            if ((op_type == `INST_VPU_VSETVL) || (op_type == `INST_VPU_VSETIVLI) || (op_type == `INST_VPU_VSETVLI)) begin
+                `TRACE(level, (", lmul=%b, sew=%b, ta=%b, ma=%b, ill=%b", op_args.vpu.vlmul, op_args.vpu.vsew, op_args.vpu.vta, op_args.vpu.vma, op_args.vpu.vill))
+            end
+        `endif
         end
     `ifdef EXT_F_ENABLE
         `EX_FPU: begin
             `TRACE(level, (", fmt=0x%0h, frm=0x%0h", op_args.fpu.fmt, op_args.fpu.frm))
+        end
+    `endif
+    `ifdef VECTOR_ENABLE
+        `EX_VPU: begin
+            `TRACE(level, (", lmul=%b, sew=%b, ta=%b, ma=%b, ill=%b", op_args.vpu.vlmul, op_args.vpu.vsew, op_args.vpu.vta, op_args.vpu.vma, op_args.vpu.vill))
         end
     `endif
         default:;
