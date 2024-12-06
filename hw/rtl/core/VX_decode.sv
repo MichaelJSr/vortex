@@ -532,7 +532,7 @@ module VX_decode import VX_gpu_pkg::*; #(
                     default:;
                 endcase
             end
-        `ifdef VECTOR_ENABLE
+        `ifdef EXT_V_ENABLED
             `INST_V: begin
                 ex_type = `EX_VPU;
                 case (func3)

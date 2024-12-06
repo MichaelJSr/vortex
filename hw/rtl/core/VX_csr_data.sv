@@ -58,7 +58,7 @@ import VX_fpu_pkg::*;
     input wire                          read_enable,
     input wire [`UUID_WIDTH-1:0]        read_uuid,
     input wire [`NW_WIDTH-1:0]          read_wid,
-`ifdef VECTOR_ENABLE
+`ifdef EXT_V_ENABLED
     input wire [`NT_WIDTH-1:0]          read_tid,
 `endif
     input wire [`VX_CSR_ADDR_BITS-1:0]  read_addr,
@@ -68,7 +68,7 @@ import VX_fpu_pkg::*;
     input wire                          write_enable,
     input wire [`UUID_WIDTH-1:0]        write_uuid,
     input wire [`NW_WIDTH-1:0]          write_wid,
-`ifdef VECTOR_ENABLE
+`ifdef EXT_V_ENABLED
     input wire [`NT_WIDTH-1:0]          write_tid,
 `endif
     input wire [`VX_CSR_ADDR_BITS-1:0]  write_addr,
@@ -127,7 +127,7 @@ import VX_fpu_pkg::*;
 `endif
 
 //Vector CSR
-`ifdef VECTOR_ENABLE
+`ifdef EXT_V_ENABLED
     reg [`NUM_WARPS-1:0][`NUM_THREADS-1:0][`XLEN-1:0] vx_csr_vstart;
     reg [`NUM_WARPS-1:0][`NUM_THREADS-1:0][`XLEN-1:0] vx_csr_vxsat;
     reg [`NUM_WARPS-1:0][`NUM_THREADS-1:0][`XLEN-1:0] vx_csr_vxrm;
@@ -163,7 +163,7 @@ import VX_fpu_pkg::*;
                 `VX_CSR_MSCRATCH: begin
                     mscratch <= write_data;
                 end
-            `ifdef VECTOR_ENABLE
+            `ifdef EXT_V_ENABLED
                 `VX_CSR_VSTART:   vx_csr_vstart[write_wid][write_tid]   <= write_data;
                 `VX_CSR_VXSAT:    vx_csr_vxsat[write_wid][write_tid]    <= write_data;
                 `VX_CSR_VXRM:     vx_csr_vxrm[write_wid][write_tid]     <= write_data;
@@ -228,7 +228,7 @@ import VX_fpu_pkg::*;
             `VX_CSR_PMPCFG0,
             `VX_CSR_PMPADDR0 : read_data_ro_w = `XLEN'(0);
 
-        `ifdef VECTOR_ENABLE
+        `ifdef EXT_V_ENABLED
             `VX_CSR_VSTART     : read_data_ro_w = vx_csr_vstart[read_wid][read_tid];
             `VX_CSR_VXSAT      : read_data_ro_w = vx_csr_vxsat[read_wid][read_tid];
             `VX_CSR_VXRM       : read_data_ro_w = vx_csr_vxrm[read_wid][read_tid];

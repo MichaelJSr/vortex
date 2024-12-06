@@ -74,10 +74,9 @@
 `define EX_SFU          2
 `define EX_FPU          (`EX_SFU + `EXT_F_ENABLED)
 
-`define VECTOR_ENABLE   0
-`define EX_VPU          (`EX_FPU + `VECTOR_ENABLE)
+`define EX_VPU          (`EX_FPU + `EXT_V_ENABLED)
 
-`define NUM_EX_UNITS    (3 + `EXT_F_ENABLED + `VECTOR_ENABLE)
+`define NUM_EX_UNITS    (3 + `EXT_F_ENABLED + `EXT_V_ENABLED)
 `define EX_BITS         `CLOG2(`NUM_EX_UNITS)
 `define EX_WIDTH        `UP(`EX_BITS)
 

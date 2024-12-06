@@ -101,7 +101,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
         .read_enable    (csr_req_valid && csr_rd_enable),
         .read_uuid      (execute_if.data.uuid),
         .read_wid       (execute_if.data.wid),
-    `ifdef VECTOR_ENABLE
+    `ifdef EXT_V_ENABLED
         .read_tid       (execute_if.data.tid),
     `endif
         .read_addr      (csr_addr),
@@ -111,7 +111,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
         .write_enable   (csr_req_valid && csr_wr_enable),
         .write_uuid     (execute_if.data.uuid),
         .write_wid      (execute_if.data.wid),
-    `ifdef VECTOR_ENABLE
+    `ifdef EXT_V_ENABLED
         .write_tid      (execute_if.data.tid),
     `endif
         .write_addr     (csr_addr),
@@ -152,7 +152,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
     assign csr_wr_enable = (csr_write_enable || (| csr_req_data));
 
 /*
-`ifdef VECTOR_ENABLE
+`ifdef EXT_V_ENABLED
     reg [`NUM_WARPS-1:0][`XLEN-1:0] AVL;
     reg [`NUM_WARPS-1:0][8:0]       VTYPEI;
     reg [`NUM_WARPS-1:0][`XLEN-1:0] VLMAX;
