@@ -158,6 +158,7 @@ cache()
 
     # reduce l1 line size
     CONFIGS="-DL1_LINE_SIZE=$XSIZE" ./ci/blackbox.sh --driver=rtlsim --app=io_addr
+    CONFIGS="-DL1_LINE_SIZE=$XSIZE -DDISABLE_L1" ./ci/blackbox.sh --driver=rtlsim --app=io_addr
     CONFIGS="-DL1_LINE_SIZE=$XSIZE" ./ci/blackbox.sh --driver=simx --app=io_addr
     CONFIGS="-DL1_LINE_SIZE=$XSIZE -DLMEM_DISABLE" ./ci/blackbox.sh --driver=rtlsim --app=sgemmx
     CONFIGS="-DL1_LINE_SIZE=$XSIZE -DLMEM_DISABLE" ./ci/blackbox.sh --driver=simx --app=sgemmx
@@ -168,12 +169,10 @@ cache()
     CONFIGS="-DICACHE_NUM_WAYS=4 -DDCACHE_NUM_WAYS=8" ./ci/blackbox.sh --driver=simx --app=sgemmx
 
     # test cache banking
-    CONFIGS="-DLMEM_NUM_BANKS=4 -DDCACHE_NUM_BANKS=1" ./ci/blackbox.sh --driver=rtlsim --app=sgemmx
-    CONFIGS="-DLMEM_NUM_BANKS=2 -DDCACHE_NUM_BANKS=2" ./ci/blackbox.sh --driver=rtlsim --app=sgemmx
-    CONFIGS="-DLMEM_NUM_BANKS=2 -DDCACHE_NUM_BANKS=2" ./ci/blackbox.sh --driver=simx --app=sgemmx
-    CONFIGS="-DDCACHE_NUM_BANKS=1" ./ci/blackbox.sh --driver=rtlsim --app=sgemmx
-    CONFIGS="-DDCACHE_NUM_BANKS=2" ./ci/blackbox.sh --driver=rtlsim --app=sgemmx
-    CONFIGS="-DDCACHE_NUM_BANKS=2" ./ci/blackbox.sh --driver=simx --app=sgemmx
+    CONFIGS="-DMEM_BLOCK_SIZE=8 -DLMEM_NUM_BANKS=4 -DDCACHE_NUM_BANKS=1" ./ci/blackbox.sh --driver=rtlsim --app=sgemmx
+    CONFIGS="-DMEM_BLOCK_SIZE=8 -DLMEM_NUM_BANKS=4 -DDCACHE_NUM_BANKS=1" ./ci/blackbox.sh --driver=simx --app=sgemmx
+    CONFIGS="-DMEM_BLOCK_SIZE=8 -DLMEM_NUM_BANKS=2 -DDCACHE_NUM_BANKS=4" ./ci/blackbox.sh --driver=rtlsim --app=sgemmx --threads=8
+    CONFIGS="-DMEM_BLOCK_SIZE=8 -DLMEM_NUM_BANKS=2 -DDCACHE_NUM_BANKS=4" ./ci/blackbox.sh --driver=simx --app=sgemmx --threads=8
 
     # replacement policy
     CONFIGS="-DDCACHE_REPL_POLICY=0" ./ci/blackbox.sh --driver=rtlsim --app=sgemmx
@@ -323,8 +322,12 @@ config2()
     CONFIGS="-DPLATFORM_MEMORY_INTERLEAVE=0" ./ci/blackbox.sh --driver=opae --app=mstress
 
     # test memory ports
-    CONFIGS="-DPLATFORM_MEMORY_BANKS=2" ./ci/blackbox.sh --driver=simx --app=demo
-    CONFIGS="-DPLATFORM_MEMORY_BANKS=2" ./ci/blackbox.sh --driver=simx --app=demo --threads=32
+    CONFIGS="-DMEM_BLOCK_SIZE=8 -DPLATFORM_MEMORY_BANKS=2" ./ci/blackbox.sh --driver=simx --app=mstress
+    CONFIGS="-DMEM_BLOCK_SIZE=8 -DPLATFORM_MEMORY_BANKS=2" ./ci/blackbox.sh --driver=simx --app=mstress --threads=8
+    CONFIGS="-DMEM_BLOCK_SIZE=8 -DPLATFORM_MEMORY_BANKS=2" ./ci/blackbox.sh --driver=rtlsim --app=mstress
+    CONFIGS="-DMEM_BLOCK_SIZE=8 -DPLATFORM_MEMORY_BANKS=2" ./ci/blackbox.sh --driver=rtlsim --app=mstress --threads=8
+    CONFIGS="-DMEM_BLOCK_SIZE=8" ./ci/blackbox.sh --driver=opae --app=mstress --threads=8
+    CONFIGS="-DMEM_BLOCK_SIZE=8" ./ci/blackbox.sh --driver=xrt --app=mstress --threads=8
 
     echo "configuration-2 tests done!"
 }
