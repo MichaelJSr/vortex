@@ -11,26 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdint.h>
+`include "VX_platform.vh"
 
-namespace vortex {
+`TRACING_OFF
+module VX_bits_concat #(
+    parameter L = 1,
+    parameter R = 1
+) (
+    input wire [`UP(L)-1:0] left_in,
+    input wire [`UP(R)-1:0] right_in,
+    output wire [(L+R)-1:0] data_out
+);
+    if (L == 0) begin : g_right_only
+        `UNUSED_VAR (left_in)
+        assign data_out = right_in;
+    end else if (R == 0) begin : g_left_only
+        `UNUSED_VAR (right_in)
+        assign data_out = left_in;
+    end else begin : g_concat
+        assign data_out = {left_in, right_in};
+    end
 
-class DramSim {
-public:
-  typedef void (*ResponseCallback)(void *arg);
-
-  DramSim(int clock_ratio);
-  ~DramSim();
-
-  void reset();
-
-  void tick();
-
-  bool send_request(bool is_write, uint64_t addr, int source_id, ResponseCallback response_cb, void* arg);
-
-private:
-	class Impl;
-	Impl* impl_;
-};
-
-}
+endmodule
+`TRACING_ON
