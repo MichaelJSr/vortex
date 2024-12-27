@@ -1,6 +1,6 @@
 #include "emulator.h"
 #include "instr.h"
-#include <iostream>
+#include "processor_impl.h"
 #include <limits>
 #include <math.h>
 #include <rvfloats.h>
