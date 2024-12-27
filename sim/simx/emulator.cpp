@@ -33,7 +33,7 @@ using namespace vortex;
 Emulator::warp_t::warp_t(const Arch& arch)
   : ireg_file(arch.num_threads(), std::vector<Word>(MAX_NUM_REGS))
   , freg_file(arch.num_threads(), std::vector<uint64_t>(MAX_NUM_REGS))
-  , vreg_file(MAX_NUM_REGS, std::vector<Byte>(arch.vsize()))
+  , vreg_file(MAX_NUM_REGS, std::vector<Byte>(MAX_NUM_REGS))
   , uuid(0)
 {}
 
