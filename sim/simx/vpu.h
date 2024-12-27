@@ -1,3 +1,4 @@
+#include "emulator.h"
 #include "instr.h"
 #include "processor_impl.h"
 #include <iostream>
