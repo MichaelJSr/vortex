@@ -3,7 +3,7 @@
 // Thanks to Troibe for his amazing work
 
 #include "vpu.h"
-#include "instr.h"
+#include "processor_impl.h"
 
 
 using namespace vortex;
