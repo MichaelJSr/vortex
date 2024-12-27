@@ -2,9 +2,15 @@
 // The purpose of this fork is to make simx-v2-vector up to date with master
 // Thanks to Troibe for his amazing work
 
-#include "vpu.h"
+#include "emulator.h"
+#include "instr.h"
+#include "processor_impl.h"
+#include <iostream>
+#include <limits>
+#include <math.h>
+#include <rvfloats.h>
 #include <stdlib.h>
-
+#include "vpu.h"
 
 using namespace vortex;
 
