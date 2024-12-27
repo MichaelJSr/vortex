@@ -1,5 +1,7 @@
 using namespace vortex;
 
+using namespace vortex;
+
 template <typename T, typename R>
 class Add {
 public:
