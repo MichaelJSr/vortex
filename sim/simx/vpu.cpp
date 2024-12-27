@@ -3,7 +3,7 @@
 // Thanks to Troibe for his amazing work
 
 #include "vpu.h"
-#include <rvfloats.h>
+#include <stdlib.h>
 
 
 using namespace vortex;
