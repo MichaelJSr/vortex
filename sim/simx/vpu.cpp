@@ -3,6 +3,8 @@
 // Thanks to Troibe for his amazing work
 
 #include "vpu.h"
+#include "emulator.h"
+
 
 using namespace vortex;
 
