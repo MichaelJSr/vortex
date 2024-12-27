@@ -5,7 +5,8 @@
 #include <limits>
 #include <math.h>
 #include <rvfloats.h>
-#include <stdlib.h>
+
+using namespace vortex;
 
 template <typename T, typename R>
 class Add {

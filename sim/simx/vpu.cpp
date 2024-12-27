@@ -3,6 +3,8 @@
 // Thanks to Troibe for his amazing work
 
 #include "vpu.h"
+#include <stdlib.h>
+
 
 using namespace vortex;
 
