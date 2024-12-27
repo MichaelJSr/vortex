@@ -1,7 +1,7 @@
 #include "emulator.h"
 #include "instr.h"
 #include "processor_impl.h"
-#include <limits>
+#include <iostream>
 #include <math.h>
 #include <rvfloats.h>
 #include <stdlib.h>
