@@ -77,16 +77,6 @@ void Emulator::warp_t::clear(uint64_t startup_addr) {
     #endif
     }
   }
-
-  for (auto& reg_file : this->vreg_file) {
-    for (auto& reg : reg_file) {
-    #ifndef NDEBUG
-      reg = 0;
-    #else
-      reg = std::rand();
-    #endif
-    }
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
