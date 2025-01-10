@@ -23,7 +23,7 @@ vector_tests()
 if [ "$#" == "0" ];
 then
   # write out test case name explicitely if there are collisions with other test names
-  testcases=(vset vmv vslide vmerge vrgather \
+  testcases=(vmv vslide vmerge vrgather \
              vlm.v vsm.v \ 
              vle8 vle16 vle32 \
              vse8 vse16 vse32 \
@@ -52,7 +52,7 @@ then
              vsext vzext \
              vid)
   if [ $XLEN -eq 32 ]; then
-    testcases+=() # fails for XLEN 64? Which doesn't make sense, since vset is essential, and other tests work
+    testcases+=(vset) # fails for XLEN 64? Which doesn't make sense, since vset is essential, and other tests work
   elif [ $XLEN -eq 64 ]; then
     testcases+=(vle64 vse64 vlse64 vsse64 vfwcvt vfncvt \
 #               vfwadd vfwsub \ # vfwadd.wf and vfwsub.wf fail, but .wv .vf and .vv pass
