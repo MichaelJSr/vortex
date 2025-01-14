@@ -1,3 +1,6 @@
+// ifdef around entire file
+// #pragma once
+
 using namespace vortex;
 
 template <typename T, typename R>

@@ -2,6 +2,9 @@
 // The purpose of this fork is to make simx-v2-vector up to date with master
 // Thanks to Troibe for his amazing work
 
+// ifdef around entire file
+// #pragma once
+
 #include "emulator.h"
 #include "instr.h"
 #include "processor_impl.h"
