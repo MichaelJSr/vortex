@@ -33,7 +33,9 @@ using namespace vortex;
 Emulator::warp_t::warp_t(const Arch& arch)
   : ireg_file(arch.num_threads(), std::vector<Word>(MAX_NUM_REGS))
   , freg_file(arch.num_threads(), std::vector<uint64_t>(MAX_NUM_REGS))
-  , vreg_file(MAX_NUM_REGS, std::vector<Byte>(arch.vsize()))
+#ifdef EXT_V_ENABLE
+  , vreg_file(MAX_NUM_REGS, std::vector<Byte>(MAX_NUM_REGS))
+#endif
   , uuid(0)
 {}
 
@@ -42,10 +44,6 @@ void Emulator::warp_t::clear(uint64_t startup_addr) {
   this->tmask.reset();
   this->uuid = 0;
   this->fcsr = 0;
-
-  this->vtype = {0, 0, 0, 0, 0};
-  this->vl = 0;
-  this->vlmax = 0;
 
   for (auto& reg_file : this->ireg_file) {
     for (auto& reg : reg_file) {
@@ -68,6 +66,7 @@ void Emulator::warp_t::clear(uint64_t startup_addr) {
     }
   }
 
+#ifdef EXT_V_ENABLE
   for (auto& reg_file : this->vreg_file) {
     for (auto& reg : reg_file) {
     #ifndef NDEBUG
@@ -77,16 +76,10 @@ void Emulator::warp_t::clear(uint64_t startup_addr) {
     #endif
     }
   }
-
-  for (auto& reg_file : this->vreg_file) {
-    for (auto& reg : reg_file) {
-    #ifndef NDEBUG
-      reg = 0;
-    #else
-      reg = std::rand();
-    #endif
-    }
-  }
+  this->vtype = {0, 0, 0, 0, 0};
+  this->vl = 0;
+  this->vlmax = 0;
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,13 +95,17 @@ Emulator::Emulator(const Arch &arch, const DCRS &dcrs, Core* core)
     // considered to be big enough to hold input tiles for one output tile.
     // In future versions, scratchpad size should be fixed to an appropriate value.
     , scratchpad(std::vector<Word>(32 * 32 * 32768))
+  #ifdef EXT_V_ENABLE
     , csrs_(arch.num_warps())
+  #endif
 {
   std::srand(50);
 
+#ifdef EXT_V_ENABLE
   for (uint32_t i = 0; i < arch_.num_warps(); ++i) {
     csrs_.at(i).resize(arch.num_threads());
   }
+#endif
 
   this->clear();
 }
@@ -360,7 +357,6 @@ void Emulator::dcache_read(void *data, uint64_t addr, uint32_t size) {
   } else {
     mmu_.read(data, addr, size, 0);
   }
-
   DPH(2, "Mem Read: addr=0x" << std::hex << addr << ", data=0x" << ByteStream(data, size) << std::dec << " (size=" << size << ", type=" << type << ")" << std::endl);
 }
 #endif
@@ -490,6 +486,7 @@ Word Emulator::get_csr(uint32_t addr, uint32_t tid, uint32_t wid) {
   case VX_CSR_FRM:        return (warps_.at(wid).fcsr >> 5);
   case VX_CSR_FCSR:       return warps_.at(wid).fcsr;
 
+#ifdef EXT_V_ENABLE
   // Vector CRSs
   case VX_CSR_VSTART:
     return csrs_.at(wid).at(tid)[VX_CSR_VSTART];
@@ -514,6 +511,7 @@ Word Emulator::get_csr(uint32_t addr, uint32_t tid, uint32_t wid) {
     return csrs_.at(wid).at(tid)[VX_CSR_VTIME];
   case VX_CSR_VINSTRET:
     return csrs_.at(wid).at(tid)[VX_CSR_VINSTRET];
+#endif
 
   case VX_CSR_MHARTID:    return (core_->id() * arch_.num_warps() + wid) * arch_.num_threads() + tid;
   case VX_CSR_THREAD_ID:  return tid;
@@ -565,6 +563,12 @@ Word Emulator::get_csr(uint32_t addr, uint32_t tid, uint32_t wid) {
         auto cluster_perf = core_->socket()->cluster()->perf_stats();
         auto socket_perf = core_->socket()->perf_stats();
         auto lmem_perf = core_->local_mem()->perf_stats();
+
+        uint64_t coalescer_misses = 0;
+        for (uint i = 0; i < NUM_LSU_BLOCKS; ++i) {
+          coalescer_misses += core_->mem_coalescer(i)->perf_stats().misses;
+        }
+
         switch (addr) {
         CSR_READ_64(VX_CSR_MPM_ICACHE_READS, socket_perf.icache.reads);
         CSR_READ_64(VX_CSR_MPM_ICACHE_MISS_R, socket_perf.icache.read_misses);
@@ -594,8 +598,9 @@ Word Emulator::get_csr(uint32_t addr, uint32_t tid, uint32_t wid) {
         CSR_READ_64(VX_CSR_MPM_MEM_READS, proc_perf.mem_reads);
         CSR_READ_64(VX_CSR_MPM_MEM_WRITES, proc_perf.mem_writes);
         CSR_READ_64(VX_CSR_MPM_MEM_LT, proc_perf.mem_latency);
-        CSR_READ_64(VX_CSR_MPM_MEM_BANK_CNTR, proc_perf.memsim.counter);
-        CSR_READ_64(VX_CSR_MPM_MEM_BANK_TICK, proc_perf.memsim.ticks);
+        CSR_READ_64(VX_CSR_MPM_MEM_BANK_ST, proc_perf.memsim.bank_stalls);
+
+        CSR_READ_64(VX_CSR_MPM_COALESCER_MISS, coalescer_misses);
 
         CSR_READ_64(VX_CSR_MPM_LMEM_READS, lmem_perf.reads);
         CSR_READ_64(VX_CSR_MPM_LMEM_WRITES, lmem_perf.writes);
@@ -631,6 +636,7 @@ void Emulator::set_csr(uint32_t addr, Word value, uint32_t tid, uint32_t wid) {
     csr_mscratch_ = value;
     break;
 
+#ifdef EXT_V_ENABLE
   // Vector CRSs
   case VX_CSR_VSTART:
     csrs_.at(wid).at(tid)[VX_CSR_VSTART] = value;
@@ -652,6 +658,7 @@ void Emulator::set_csr(uint32_t addr, Word value, uint32_t tid, uint32_t wid) {
     csrs_.at(wid).at(tid)[VX_CSR_VTYPE] = value;
     break;
   case VX_CSR_VLENB: // read only, set to VLEN / 8
+#endif
 
   case VX_CSR_SATP:
   #ifdef VM_ENABLE
