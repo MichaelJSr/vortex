@@ -27,6 +27,9 @@
 #include "func_unit.h"
 #include "mem_coalescer.h"
 #include "VX_config.h"
+#ifdef EXT_V_ENABLE
+#include "vector_unit.h"
+#endif
 
 namespace vortex {
 
@@ -131,6 +134,12 @@ public:
     return mem_coalescers_.at(idx);
   }
 
+#ifdef EXT_V_ENABLE
+  std::vector<VectorUnit::Ptr>& vector_units() {
+    return vector_units_;
+  }
+#endif
+
   const PerfStats& perf_stats() const {
     return perf_stats_;
   }
@@ -149,6 +158,10 @@ private:
   uint32_t core_id_;
   Socket* socket_;
   const Arch& arch_;
+
+#ifdef EXT_V_ENABLE
+  std::vector<VectorUnit::Ptr> vector_units_;
+#endif
 
   Emulator emulator_;
 

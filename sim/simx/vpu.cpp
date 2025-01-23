@@ -11,9 +11,45 @@
 #include <math.h>
 #include <rvfloats.h>
 #include <stdlib.h>
+#include "vector_unit.h"
 #include "vpu.h"
 
 using namespace vortex;
+
+struct vtype_t {
+  uint32_t vill;
+  uint32_t vma;
+  uint32_t vta;
+  uint32_t vsew;
+  uint32_t vlmul;
+};
+
+union reg_data_t {
+  Word     u;
+  WordI    i;
+  WordF    f;
+  float    f32;
+  double   f64;
+  uint32_t u32;
+  uint64_t u64;
+  int32_t  i32;
+  int64_t  i64;
+};
+
+class VectorUnit::Impl {
+public:
+
+  void load(const Instr &instr, uint32_t wid, std::vector<reg_data_t[3]> &rsdata);
+  void store(const Instr &instr, uint32_t wid, std::vector<reg_data_t[3]> &rsdata);
+  void execute(const Instr &instr, uint32_t wid, std::vector<reg_data_t[3]> &rsdata, std::vector<reg_data_t> &rddata);  
+
+private:
+
+  std::vector<std::vector<Byte>>  vreg_file_;
+  vtype_t                         vtype_;
+  uint32_t                        vl_;
+  Word                            vlmax_;
+};
 
 void Emulator::loadVector(const Instr &instr, uint32_t wid, std::vector<reg_data_t[3]> &rsdata) {
   auto &warp = warps_.at(wid);

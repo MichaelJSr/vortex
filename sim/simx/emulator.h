@@ -19,6 +19,9 @@
 #include <stack>
 #include <mem.h>
 #include "types.h"
+#ifdef EXT_V_ENABLE
+#include "vector_unit.h"
+#endif
 
 namespace vortex {
 
@@ -175,7 +178,10 @@ private:
   uint32_t mat_size;
   uint32_t tc_size;
   uint32_t tc_num;
+#ifdef EXT_V_ENABLE
+  std::vector<VectorUnit::Ptr> vpu_;
   std::vector<std::vector<std::unordered_map<uint32_t, uint32_t>>> csrs_;
+#endif
 };
 
 }

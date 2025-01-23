@@ -34,7 +34,7 @@ Emulator::warp_t::warp_t(const Arch& arch)
   : ireg_file(arch.num_threads(), std::vector<Word>(MAX_NUM_REGS))
   , freg_file(arch.num_threads(), std::vector<uint64_t>(MAX_NUM_REGS))
 #ifdef EXT_V_ENABLE
-  , vreg_file(MAX_NUM_REGS, std::vector<Byte>(MAX_NUM_REGS))
+  , vreg_file(MAX_NUM_REGS, std::vector<Byte>(VLEN / 8))
 #endif
   , uuid(0)
 {}
@@ -96,6 +96,7 @@ Emulator::Emulator(const Arch &arch, const DCRS &dcrs, Core* core)
     // In future versions, scratchpad size should be fixed to an appropriate value.
     , scratchpad(std::vector<Word>(32 * 32 * 32768))
   #ifdef EXT_V_ENABLE
+    , vpu_(core->vector_units())
     , csrs_(arch.num_warps())
   #endif
 {
