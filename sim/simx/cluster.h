@@ -21,6 +21,9 @@
 #include "core.h"
 #include "socket.h"
 #include "constants.h"
+#ifdef EXT_V_ENABLE
+#include "vector_unit.h"
+#endif
 
 namespace vortex {
 
@@ -74,6 +77,9 @@ private:
   ProcessorImpl*              processor_;
   std::vector<Socket::Ptr>    sockets_;
   std::vector<CoreMask>       barriers_;
+#ifdef EXT_V_ENABLE
+  std::vector<VecUnit::Ptr>   vec_units_;
+#endif
   CacheSim::Ptr               l2cache_;
   uint32_t                    cores_per_socket_;
 };

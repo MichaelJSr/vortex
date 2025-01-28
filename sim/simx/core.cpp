@@ -29,7 +29,11 @@ Core::Core(const SimContext& ctx,
            uint32_t core_id,
            Socket* socket,
            const Arch &arch,
-           const DCRS &dcrs)
+           const DCRS &dcrs
+          #ifdef EXT_V_ENABLE
+           , const std::vector<VecUnit::Ptr>& vec_units
+          #endif
+           )
   : SimObject(ctx, StrFormat("core%d", core_id))
   , icache_req_ports(1, this)
   , icache_rsp_ports(1, this)
@@ -38,6 +42,9 @@ Core::Core(const SimContext& ctx,
   , core_id_(core_id)
   , socket_(socket)
   , arch_(arch)
+#ifdef EXT_V_ENABLE
+  , vec_units_(vec_units)
+#endif
   , emulator_(arch, dcrs, this)
   , ibuffers_(arch.num_warps(), IBUF_SIZE)
   , scoreboard_(arch_)
@@ -336,7 +343,15 @@ void Core::issue() {
             default: assert(false);
             }
           } break;
-          // Add case for VpuType
+        #ifdef EXT_V_ENABLE
+          case FUType::VPU: {
+            ++perf_stats_.scrb_vpu;
+            switch (use.vpu_type) {
+              case VpuType::VSET:
+              default: assert(false);
+            }
+          } break;
+        #endif
           default: assert(false);
           }
         }

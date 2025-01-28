@@ -20,7 +20,11 @@ Socket::Socket(const SimContext& ctx,
                 uint32_t socket_id,
                 Cluster* cluster,
                 const Arch &arch,
-                const DCRS &dcrs)
+                const DCRS &dcrs
+              #ifdef EXT_V_ENABLE
+                , const std::vector<VecUnit::Ptr>& vec_units
+              #endif
+                )
   : SimObject(ctx, StrFormat("socket%d", socket_id))
   , mem_req_ports(L1_MEM_PORTS, this)
   , mem_rsp_ports(L1_MEM_PORTS, this)
@@ -100,7 +104,14 @@ Socket::Socket(const SimContext& ctx,
   // create cores
   for (uint32_t i = 0; i < cores_per_socket; ++i) {
     uint32_t core_id = socket_id * cores_per_socket + i;
-    cores_.at(i) = Core::Create(core_id, this, arch, dcrs);
+    cores_.at(i) = Core::Create(core_id,
+                                this,
+                                arch,
+                                dcrs
+                              #ifdef EXT_V_ENABLE
+                                , vec_units
+                              #endif
+                                );
   }
 
   // connect cores to caches

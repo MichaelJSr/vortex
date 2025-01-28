@@ -8,7 +8,7 @@
 
 using namespace vortex;
 
-class VectorUnit : public SimObject<VectorUnit> {
+class VecUnit : public SimObject<VecUnit> {
 public:
   struct PerfStats {
     uint64_t reads;
@@ -38,11 +38,11 @@ public:
   SimPort<instr_trace_t*> Input;
   SimPort<instr_trace_t*> Output;
 
-  VectorUnit(const SimContext& ctx,
-             const char* name,
-             const Arch &arch);
+  VecUnit(const SimContext& ctx,
+          const char* name,
+          const Arch &arch);
 
-  ~VectorUnit();
+  ~VecUnit();
 
   void reset();
 

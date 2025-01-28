@@ -527,6 +527,11 @@
 `define FNCP_PE_RATIO 2
 `endif
 
+// Number of Texture Units
+`ifndef NUM_VEC_UNITS
+`define NUM_VEC_UNITS `UP(`NUM_CORES / 8)
+`endif
+
 // Icache Configurable Knobs //////////////////////////////////////////////////
 
 // Cache Enable

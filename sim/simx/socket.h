@@ -20,6 +20,9 @@
 #include "local_mem.h"
 #include "core.h"
 #include "constants.h"
+#ifdef EXT_V_ENABLE
+#include "vector_unit.h"
+#endif
 
 namespace vortex {
 
@@ -39,7 +42,11 @@ public:
          uint32_t socket_id,
          Cluster* cluster,
          const Arch &arch,
-         const DCRS &dcrs);
+         const DCRS &dcrs
+        #ifdef EXT_V_ENABLE
+         , const std::vector<VecUnit::Ptr>& vec_units
+        #endif
+         );
 
   ~Socket();
 

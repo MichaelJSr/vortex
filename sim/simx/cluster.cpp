@@ -27,17 +27,45 @@ Cluster::Cluster(const SimContext& ctx,
   , processor_(processor)
   , sockets_(NUM_SOCKETS)
   , barriers_(arch.num_barriers(), 0)
+#ifdef EXT_V_ENABLE
+  , vec_units_(NUM_VEC_UNITS)
+#endif
   , cores_per_socket_(arch.socket_size())
 {
   char sname[100];
 
   uint32_t sockets_per_cluster = sockets_.size();
 
+#ifdef EXT_V_ENABLE
+  // create vec units
+  for (uint32_t i = 0; i < NUM_VEC_UNITS; ++i) {
+    snprintf(sname, 100, "cluster%d-vec_unit%d", cluster_id, i);
+    vec_units_.at(i) = VecUnit::Create(sname, arch);
+  }
+#endif
+
   // create sockets
 
-  for (uint32_t i = 0; i < sockets_per_cluster; ++i) {
+  for (uint32_t i = 0, vec_idx = 0; i < sockets_per_cluster; ++i) {
+  #ifdef EXT_V_ENABLE
+    auto per_socket_vec_units = std::max<uint32_t>((NUM_VEC_UNITS + sockets_per_cluster - 1 - i) / sockets_per_cluster, 1);
+
+    std::vector<VecUnit::Ptr> vec_units(per_socket_vec_units);
+
+    for (uint32_t j = 0; j < per_socket_vec_units; ++j) {
+      vec_units.at(j) = vec_units_.at(vec_idx++ % NUM_VEC_UNITS);
+    }
+  #endif
+
     uint32_t socket_id = cluster_id * sockets_per_cluster + i;
-    sockets_.at(i) = Socket::Create(socket_id, this, arch, dcrs);
+    sockets_.at(i) = Socket::Create(socket_id,
+                                    this,
+                                    arch,
+                                    dcrs
+                                  #ifdef EXT_V_ENABLE
+                                    , vec_units
+                                  #endif
+                                    );
   }
 
   // Create l2cache

@@ -36,7 +36,7 @@ union reg_data_t {
   int64_t  i64;
 };
 
-class VectorUnit::Impl {
+class VecUnit::Impl {
 public:
 
   void load(const Instr &instr, uint32_t wid, std::vector<reg_data_t[3]> &rsdata);

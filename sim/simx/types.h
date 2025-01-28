@@ -106,6 +106,9 @@ enum class FUType {
   LSU,
   FPU,
   SFU,
+#ifdef EXT_V_ENABLE
+  VPU,
+#endif
   TCU,
   Count
 };

@@ -55,6 +55,9 @@ public:
     uint64_t scrb_sfu;
     uint64_t scrb_csrs;
     uint64_t scrb_wctl;
+  #ifdef EXT_V_ENABLE
+    uint64_t scrb_vpu;
+  #endif
     uint64_t ifetches;
     uint64_t loads;
     uint64_t stores;
@@ -75,6 +78,9 @@ public:
       , scrb_sfu(0)
       , scrb_csrs(0)
       , scrb_wctl(0)
+    #ifdef EXT_V_ENABLE
+      , scrb_vpu(0)
+    #endif
       , ifetches(0)
       , loads(0)
       , stores(0)
@@ -93,7 +99,11 @@ public:
        uint32_t core_id,
        Socket* socket,
        const Arch &arch,
-       const DCRS &dcrs);
+       const DCRS &dcrs
+      #ifdef EXT_V_ENABLE
+       , const std::vector<VecUnit::Ptr>& vec_units
+      #endif
+       );
 
   ~Core();
 
@@ -135,8 +145,8 @@ public:
   }
 
 #ifdef EXT_V_ENABLE
-  std::vector<VectorUnit::Ptr>& vector_units() {
-    return vector_units_;
+  std::vector<VecUnit::Ptr>& vector_units() {
+    return vec_units_;
   }
 #endif
 
@@ -160,7 +170,7 @@ private:
   const Arch& arch_;
 
 #ifdef EXT_V_ENABLE
-  std::vector<VectorUnit::Ptr> vector_units_;
+  std::vector<VecUnit::Ptr> vec_units_;
 #endif
 
   Emulator emulator_;

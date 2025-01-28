@@ -96,7 +96,7 @@ Emulator::Emulator(const Arch &arch, const DCRS &dcrs, Core* core)
     // In future versions, scratchpad size should be fixed to an appropriate value.
     , scratchpad(std::vector<Word>(32 * 32 * 32768))
   #ifdef EXT_V_ENABLE
-    , vpu_(core->vector_units())
+    , vec_units_(core->vector_units())
     , csrs_(arch.num_warps())
   #endif
 {
@@ -133,6 +133,12 @@ void Emulator::clear() {
   for (auto& barrier : barriers_) {
     barrier.reset();
   }
+
+#ifdef EXT_V_ENABLE
+  for (auto& vec_unit : vec_units_) {
+    vec_unit->reset();
+  }
+#endif
 
   csr_mscratch_ = startup_arg;
 
@@ -608,6 +614,20 @@ Word Emulator::get_csr(uint32_t addr, uint32_t tid, uint32_t wid) {
         CSR_READ_64(VX_CSR_MPM_LMEM_BANK_ST, lmem_perf.bank_stalls);
         }
       } break;
+    #ifdef EXT_V_ENABLE
+      case VX_DCR_MPM_CLASS_VEC: {
+        VecUnit::PerfStats vec_perf_stats;
+        for (auto vec_unit : vec_units_) {
+          vec_perf_stats += vec_unit->perf_stats();
+        }
+        switch (addr) {
+        CSR_READ_64(VX_CSR_MPM_VEC_READS, vec_perf_stats.reads);
+        CSR_READ_64(VX_CSR_MPM_VEC_WRITES, vec_perf_stats.writes);
+        CSR_READ_64(VX_CSR_MPM_VEC_LAT, vec_perf_stats.latency);
+        CSR_READ_64(VX_CSR_MPM_VEC_ST, vec_perf_stats.stalls);
+        }
+      } break;
+    #endif
       default: {
         std::cout << "Error: invalid MPM CLASS: value=" << perf_class << std::endl;
         std::abort();
