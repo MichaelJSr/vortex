@@ -653,6 +653,20 @@ void Emulator::execute(const Instr &instr, uint32_t wid, instr_trace_t *trace) {
     trace->fetch_stall = true;
     break;
   }
+  case Opcode::J: {
+    // RV32I: J
+    trace->fu_type = FUType::ALU;
+    trace->alu_type = AluType::BRANCH;
+    for (uint32_t t = thread_start; t < num_threads; ++t) {
+      if (!warp.tmask.test(t))
+        continue;
+      rd_data[t].i = next_pc;
+    }
+    next_pc = warp.PC + immsrc;
+    trace->fetch_stall = true;
+    rd_write = true;
+    break;
+  }
   case Opcode::JAL: {
     // RV32I: JAL
     trace->fu_type = FUType::ALU;
