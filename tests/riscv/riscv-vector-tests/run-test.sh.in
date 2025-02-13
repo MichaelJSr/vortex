@@ -4,7 +4,7 @@ RISCV_TOOLCHAIN_PATH=${RISCV_TOOLCHAIN_PATH:-$TOOLDIR"/riscv"$XLEN"-gnu-toolchai
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 RESTORE_PREV_DIR=$(pwd)
 
-VECTOR_TESTS_REPOSITORY=https://github.com/MichaelJSr/testcases/blob/updated
+VECTOR_TESTS_REPOSITORY=https://github.com/MichaelJSr/testcases/raw/updated
 VECTOR_TESTS_BASE_NAME=vector-tests.tar.bz2
 
 vector_tests()

@@ -35,6 +35,7 @@ static const std::unordered_map<Opcode, InstType> sc_instTable = {
   {Opcode::B,       InstType::B},
   {Opcode::LUI,     InstType::U},
   {Opcode::AUIPC,   InstType::U},
+  {Opcode::J,       InstType::J},
   {Opcode::JAL,     InstType::J},
   {Opcode::JALR,    InstType::I},
   {Opcode::SYS,     InstType::I},

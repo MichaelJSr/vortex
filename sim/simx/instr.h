@@ -26,6 +26,7 @@ enum class Opcode {
   B         = 0x63,
   LUI       = 0x37,
   AUIPC     = 0x17,
+  J         = 0x11,
   JAL       = 0x6f,
   JALR      = 0x67,
   SYS       = 0x73,
