@@ -9,7 +9,7 @@ VECTOR_TESTS_BASE_NAME=vector-tests.tar.bz2
 
 vector_tests()
 {
-    parts=$(eval echo {a..l})
+    parts=$(eval echo {a..z})
     for x in $parts
     do
         wget $VECTOR_TESTS_REPOSITORY/$VECTOR_TESTS_BASE_NAME.parta$x

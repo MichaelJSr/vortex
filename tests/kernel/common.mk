@@ -1,9 +1,18 @@
 ROOT_DIR := $(realpath ../../..)
 
 ifeq ($(XLEN),64)
+ifeq ($(EXT_V_ENABLE),1)
+CFLAGS += -march=rv64imafdv_zve64d -mabi=lp64d # Compile for vector extension
+else
 CFLAGS += -march=rv64imafd -mabi=lp64d
+endif
+
+else
+ifeq ($(EXT_V_ENABLE),1)
+CFLAGS += -march=rv32imafv_zve32f -mabi=ilp32f # Compile for vector extension
 else
 CFLAGS += -march=rv32imaf -mabi=ilp32f
+endif
 endif
 STARTUP_ADDR ?= 0x80000000
 
