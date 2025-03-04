@@ -23,7 +23,7 @@ cd env
 git clone https://github.com/riscv/riscv-test-env.git
 cd ..
 
-make generate-stage1 --environment-overrides VLEN=$VLEN XLEN=$XLEN MODE=machine && make all -j$(nproc) --environment-overrides VLEN=$VLEN XLEN=$XLEN MODE=machine
+make generate-stage1 --environment-overrides VLEN=$VLEN XLEN=$XLEN MARCH=rv"$XLEN"imafv_zve"$XLEN"f MODE=machine && make all -j$(nproc) --environment-overrides VLEN=$VLEN XLEN=$XLEN MARCH=rv"$XLEN"imafv_zve"$XLEN"f MODE=machine
 mv out/v"$VLEN"x"$XLEN"machine/bin/stage2 $PREV_DIR/v"$VLEN"x"$XLEN"
 
 cd $PREV_DIR
